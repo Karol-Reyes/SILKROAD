@@ -13,15 +13,16 @@ public class Store {
     private Triangle shape;
     private String color;
     private int emptiedCount; //Metodo ciclo 2
-
-    private static final String[] sColor = {"red", "yellow", "blue", "green", "magenta"};
-    private static final Random rand = new Random();
+    private String sColor = "yellow";
+    //private static final String[] sColor = {"red", "yellow", "blue", "green", "magenta"};
+    //private static final Random rand = new Random();
 
     public Store(int location, int tenges, Road road) {
         this.location = location;
         this.tenges = tenges;
         this.initialTenges = tenges;
-        this.color = sColor[rand.nextInt(sColor.length)];
+        //this.color = sColor[rand.nextInt(sColor.length)];
+        this.color = sColor;
         this.maxTenges = 0;
         this.emptiedCount = 0; 
 
@@ -72,6 +73,12 @@ public class Store {
 
     /** @return color de la tienda */
     public String getColor() { return color; }
+    
+    /** cambia la tienda a otro color */
+    public void setColor(String color) {
+        this.color = color;
+        this.shape.changeColor(color);
+    }
 
     /** Restaura las monedas de la tienda a su valor inicial. */
     public void resupply() { tenges = initialTenges; }

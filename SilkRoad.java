@@ -22,6 +22,7 @@ public class SilkRoad
     private int maxTenge;
     private int totalInitialTenges = 0;
     private boolean isVisible;
+    private boolean itsOk;
 
     ////////////////////////////////////////////////////// C I C L O   U N O ////////////////////////////////////////
     /**
@@ -30,9 +31,11 @@ public class SilkRoad
      */
     public SilkRoad(int quantity) {
         road = new Road(quantity);
-        boolean isVisible = false;
+        boolean isVisible = true;
         this.robots = new ArrayList<>();
         this.stores = new ArrayList<>(); 
+        this.itsOk = true;
+        makeVisible();
         
         backGround = new Rectangle();
         backGround.changeColor("black");
@@ -94,16 +97,18 @@ public class SilkRoad
      * @param location posición en el camino
      */
     public void placeRobot(int location) {
-        if (location < 1 || location > road.getRectangles().size()) {
+        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(
                 null, "Position out of range.", "Error", JOptionPane.WARNING_MESSAGE
             );
+            itsOk = false;
             return;
         }
         for (Robot r : robots) {
-            if (r.getPosition() == location - 1) {
+            if (isVisible == true && r.getPosition() == location - 1) {
                 JOptionPane.showMessageDialog(
                     null, "There is already a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
+                itsOk = false;
                 return;
             }
         }
@@ -111,6 +116,7 @@ public class SilkRoad
         robots.add(robot);
         
         updateProgressBar();
+        itsOk = true;
     }
     
     /**
@@ -119,8 +125,9 @@ public class SilkRoad
      * @param newLocation nueva posición a la que se moverá
      */
     public void moveRobot(int location, int meters) {
-        if (meters < 1 || meters > road.getRectangles().size()) {
+        if (isVisible == true && (meters < 1 || meters > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Movement out of range.", "Error", JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
             return;
         }
         Robot robot = null;
@@ -132,13 +139,15 @@ public class SilkRoad
                 break;
             }
         }
-        if (robot == null) {
+        if (isVisible == true && robot == null) {
             JOptionPane.showMessageDialog(null, "There is no a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
             return;
         }
         for (Robot r : robots) {
-            if (r != robot && r.getPosition() == meters - 1) {
+            if (isVisible == true && r != robot && r.getPosition() == meters - 1) {
                 JOptionPane.showMessageDialog(null, "There is already a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
+                itsOk = false;
                 return;
             }
         }
@@ -153,6 +162,7 @@ public class SilkRoad
             }
         }
         updateProgressBar();
+        itsOk = true;
     }
     
     /**
@@ -160,8 +170,9 @@ public class SilkRoad
      * @param location posición del robot a eliminar
      */
     public void removeRobot(int location) {
-        if (location < 1 || location > road.getRectangles().size()) {
+        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Box out of range", "Error",JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
             return;
         }
         boolean removed = false;
@@ -174,10 +185,12 @@ public class SilkRoad
                 break;
             }
         }
-        updateProgressBar();
-        if (!removed){
-            JOptionPane.showMessageDialog(null, "There is no a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);    
+        if (isVisible == true && !removed){
+            JOptionPane.showMessageDialog(null, "There is no a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);   
+            itsOk = false;
         }
+        updateProgressBar();
+        itsOk = true;
     }
     
     /**
@@ -191,6 +204,7 @@ public class SilkRoad
             r.resetStolenTenges();
         }
         updateProgressBar();
+        itsOk = true;
     }
 
     /**
@@ -199,14 +213,16 @@ public class SilkRoad
      * @param tenges número de monedas iniciales
      */
     public void placeStore(int location, int tenges) {
-        if (location < 1 || location > road.getRectangles().size()) {
+        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Box out of range", "Error", JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
             return;
         }
     
         for (Store s : stores) {
-            if (s.getLocation() == location - 1) {
+            if (isVisible == true && s.getLocation() == location - 1) {
                 JOptionPane.showMessageDialog(null, "There is already a store in the box", "Error", JOptionPane.WARNING_MESSAGE);
+                itsOk = false;
                 return;
             }
         }
@@ -216,6 +232,7 @@ public class SilkRoad
         totalInitialTenges += tenges;
         store.setInitialTenges(tenges);
         updateProgressBar();
+        itsOk = true;
     }
     
     /**
@@ -223,8 +240,9 @@ public class SilkRoad
      * @param location posición de la tienda a eliminar
      */
     public void removeStore(int location) {
-        if (location < 1 || location > road.getRectangles().size()) {
+        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Box out of range", "Error", JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
             return;
         }
         boolean removed  = false;
@@ -234,15 +252,16 @@ public class SilkRoad
                 totalInitialTenges -= s.getInitialTenges(); 
                 s.remove();                
                 stores.remove(i);
-                
                 removed = true;
                 break;
             }
         }
-        updateProgressBar();
-        if (!removed){
+        if (isVisible == true && !removed){
             JOptionPane.showMessageDialog(null, "There is no a store in the box", "Error", JOptionPane.WARNING_MESSAGE);    
+            itsOk = false;
         }
+        updateProgressBar();
+        itsOk = true;
     }
     
     /**
@@ -258,6 +277,7 @@ public class SilkRoad
            r.resetStolenTenges(); // tenges robados se reinician a 0
         }
         updateProgressBar();
+        itsOk = true;
     }
     
     /**
@@ -266,8 +286,10 @@ public class SilkRoad
     public void reboot(){
         returnRobots(); 
         resupplyStores();
-        JOptionPane.showMessageDialog(null, "All items have been reset", 
+        if (isVisible == true){
+            JOptionPane.showMessageDialog(null, "All items have been reset", 
             "reboot completed", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
     /**
@@ -326,7 +348,7 @@ public class SilkRoad
     
     /*Calcula las monedas con las que quedan los robots despues de
      * descontarlos pasos
-     * @return sume neta de tenges en los robots
+     * @return suma neta de tenges en los robots
      */   
     private int getTengesRobots() {
         int sum = 0;
@@ -369,15 +391,14 @@ public class SilkRoad
         int[][] information = new int[result][2]; 
     
         int index = 0;
-    
         for (Robot r : robots) {
             information[index][0] = r.getPosition() + 1;
-            information[index][1] = r.getTenges();
+            information[index][1] = r.getStolenTenges() - r.getSteps();
             index++;
         }
-    java.util.Arrays.sort(information, (a, b) -> Integer.compare(a[0], b[0]));
-
-    return information;
+    
+        java.util.Arrays.sort(information, (a, b) -> Integer.compare(a[0], b[0]));
+        return information;
     }
    
     /*
@@ -405,56 +426,150 @@ public class SilkRoad
      * finaliza el juego
      */
     public void finish() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("==== Final Report ====\n");
-        sb.append("Initial total store coins: ").append(totalInitialTenges).append("\n");
-        sb.append("Final coins stolen by robots (net): ").append(getTengesRobots()).append("\n");
-        sb.append("Simulation finished.\n");
-    
-        JOptionPane.showMessageDialog(null, sb.toString(), "Silk Road - Finished", JOptionPane.INFORMATION_MESSAGE);
+        if (isVisible == true){
+            String report =
+            "==== Final Report ====\n" +
+            "Initial total store coins: " + totalInitialTenges + "\n" +
+            "Final coins stolen by robots (profit): " + getTengesRobots() + "\n" +
+            "Simulation finished.\n";
+
+            JOptionPane.showMessageDialog(null, report, "Silk Road - Finished", JOptionPane.INFORMATION_MESSAGE);
+        }
         makeInvisible(); // oculta todos los objetos
         System.exit(0);  // termina el programa
     }
-    ///////////////////////////////////////////////////// C I C L O   D O S /////////////////////////////////////////////
-    /**
-     * Configura robots y tiendas respecto a la cantidad de dias.
-     * @param entityCount cantidad de entidades a configurar
-     */
-    public void setupEntities(int days) {
-        Random rand = new Random();
-        List<Integer> usedPositions = new ArrayList<>();
     
-        for (int i = 0; i < days; i++) {
-            int type = rand.nextInt(2) + 1; 
-            int position = rand.nextInt(road.getRectangles().size()) + 1;
-            while (usedPositions.contains(position)) {
-                position = rand.nextInt(road.getRectangles().size()) + 1;
-            }
-            usedPositions.add(position);
-            if (type == 1) {
-                placeRobot(position);
-            } else {
-                int tenges = rand.nextInt(99) + 1; 
-                placeStore(position, tenges);
+    public boolean ok(){
+        return itsOk;
+    }
+    ///////////////////////////////////////////////////// C I C L O   D O S /////////////////////////////////////////////
+    /*
+     * Metodo auxiliar para calcular el maximo de la ruta
+     * @param days cantidad de objetos en la ruta 
+     * @return tamaño de la carretera
+     */
+    private static int maxPos(int[][] days) {
+        int maxPos = 0;
+        for (int[] row : days) {
+            if (row.length >= 2 && row[1] > maxPos) {
+                maxPos = row[1];
             }
         }
+        return maxPos;
+    }
+    
+    /**
+     * Configura robots y tiendas respecto a la entrada estandas.
+     * @param days conkjunto de entidades a ingresar
+     */
+    public SilkRoad(int[][] days) {
+        this(maxPos(days));
+        for (int[] row : days) {
+            if (isVisible == true && row.length < 2) {
+                JOptionPane.showMessageDialog(
+                    null, "invalid row, please assign at least one object and one location",
+                    "Configuration Error", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            int type = row[0];
+            int position = row[1];
+            switch (type) {
+                case 1:
+                    placeRobot(position);
+                    robots.get(robots.size() - 1).setColor("red");
+                    break;
+                case 2:
+                    if (isVisible == true && row.length < 3) {
+                        JOptionPane.showMessageDialog(
+                        null, "the 'tenges' data is missing", 
+                        "Configuration Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        int tenges = row[2];
+                        placeStore(position, tenges);
+                        stores.get(stores.size() - 1).setColor("magenta");
+                    }
+                    break;
+                default:
+                    if (isVisible == true){
+                        JOptionPane.showMessageDialog(
+                        null, "invalid type: " + type + " (only 1=Robot or 2=Store)",
+                        "Configuration Error", JOptionPane.ERROR_MESSAGE);
+                    }
+            }
+        }
+    }
+    
+    /**
+     * Cada robot escoge su movimiento mas rentable a la hora de 
+     * robar tiendas
+     */
+    public void moveRobot(){
+        boolean moved;
+        do {
+            moved = false;
+            Robot rob = null;
+            Store sto = null;
+            int bestProfit = Integer.MIN_VALUE;
+            for (Robot r : robots) {
+                Store bestRobot = null;
+                int bestProfitRobot = Integer.MIN_VALUE;
+                for (Store s : stores) {
+                    if (s.getTenges() <= 0) continue;
+                    int profit = s.getTenges() - Math.abs(s.getLocation() - r.getPosition());
+                    if (profit >= 0 && profit > bestProfitRobot) {
+                        bestProfitRobot = profit;
+                        bestRobot = s;
+                    }
+                }
+                if (bestRobot != null && bestProfitRobot > bestProfit) {
+                    bestProfit = bestProfitRobot;
+                    rob = r;
+                    sto = bestRobot;
+                }
+            }
+    
+            if (rob != null && sto != null) {
+                moveRobot(rob.getPosition() + 1, sto.getLocation() + 1);
+                rob.recordEarnings(bestProfit);
+                moved = true;
+            }
+        } while (moved);
     }
     
     /**
      * dice cuantas veces se han vaciados las tienda
+     * @return el conjunto de tienda con la cuenta de cuantas veces
+     * se vaciaron cada una
      */
-    
-    public void empitiedStores() {
-        String report = ""; // texto vacío al inicio
+    public int[][] empitiedStores() {
+        int[][] data = new int[stores.size()][2];
 
         for (int i = 0; i < stores.size(); i++) {
             Store s = stores.get(i);
-            int storeId = i + 1;
-    
-            report = report + "Store " + storeId + " (pos " + (s.getLocation() + 1) + ") " + "emptied " + s.getEmptiedCount() + " times\n";
+            data[i][0] = s.getLocation() + 1; 
+            data[i][1] = s.getEmptiedCount();
         }
-    
-        JOptionPane.showMessageDialog(null, report, "Store Report", JOptionPane.INFORMATION_MESSAGE);
+        return data;
     }
     
+    /**
+     * Permite conocer las ganancias obtenidas por cada robot en cada movimiento
+     * @return matriz de int[][] con la informacion
+     */
+    public int[][] profitPerMove(){
+        int[][] result = new int[robots.size()][];
+    
+        for (int i = 0; i < robots.size(); i++) {
+            Robot r = robots.get(i);
+            java.util.List<Integer> history = r.getEarningsHistory();
+    
+            result[i] = new int[history.size() + 1];
+            result[i][0] = r.getOriginalPosition() + 1;
+    
+            for (int j = 0; j < history.size(); j++) {
+                result[i][j + 1] = history.get(j);
+            }
+        }
+        return result;
+    }
 }

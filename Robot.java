@@ -11,8 +11,9 @@ public class Robot {
     private int originalLocation;
     private Circle shape;
     private String color;
-    private static final String[] colors = {"red", "yellow", "blue", "green", "magenta"};
-    private static final Random rand = new Random();
+    private String colors = "green";
+    //private static final String[] colors = {"red", "yellow", "blue", "green", "magenta"};
+    //private static final Random rand = new Random();
     private int tenges;
     private int stolenTenges;
     
@@ -29,7 +30,8 @@ public class Robot {
         this.originalLocation = location;
         this.tenges = 0;
         this.stolenTenges = 0;
-        this.color = colors[rand.nextInt(colors.length)];
+        this.color = colors;
+        //this.color = colors[rand.nextInt(colors.length)];
 
         Rectangle rect = road.getRectangles().get(location);
         int posX = rect.getX() + 8;
@@ -52,6 +54,12 @@ public class Robot {
 
     /** @return color del robot */
     public String getColor() { return color; }
+    
+    /** cambia el robot a un nuevo color */
+    public void setColor(String color) {
+        this.color = color;
+        this.shape.changeColor(color);
+    }
 
     /** @return total de monedas que posee */
     public int getTenges() { return this.tenges; }
