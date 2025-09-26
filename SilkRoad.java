@@ -509,10 +509,10 @@ public class SilkRoad
             moved = false;
             Robot rob = null;
             Store sto = null;
-            int bestProfit = Integer.MIN_VALUE;
+            int bestProfit = -10000;
             for (Robot r : robots) {
                 Store bestRobot = null;
-                int bestProfitRobot = Integer.MIN_VALUE;
+                int bestProfitRobot = -10000;
                 for (Store s : stores) {
                     if (s.getTenges() <= 0) continue;
                     int profit = s.getTenges() - Math.abs(s.getLocation() - r.getPosition());
