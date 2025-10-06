@@ -23,7 +23,9 @@ public class SilkRoad
     private int totalInitialTenges = 0;
     private boolean isVisible;
     private boolean itsOk;
-
+    private List<Integer> totallitary = new ArrayList<>();
+    private ProgressBar progressBar;
+    
     ////////////////////////////////////////////////////// C I C L O   U N O ////////////////////////////////////////
     /**
      * Crea una instancia del juego con un camino de cierta cantidad de casillas.
@@ -31,55 +33,44 @@ public class SilkRoad
      */
     public SilkRoad(int quantity) {
         road = new Road(quantity);
-        boolean isVisible = true;
+        boolean isVisible = false;
         this.robots = new ArrayList<>();
         this.stores = new ArrayList<>(); 
         this.itsOk = true;
-        makeVisible();
+        makeVisible(); 
         
-        backGround = new Rectangle();
-        backGround.changeColor("black");
-        backGround.changeSize(20, 200);
-        backGround.moveHorizontal(260);
-        backGround.moveVertical(565);
-        backGround.makeVisible();
-        
-        bar = new Rectangle();
-        bar.changeColor("green");
-        bar.changeSize(20, 0);
-        bar.moveHorizontal(260);
-        bar.moveVertical(565);
-        bar.makeVisible();
+        progressBar = new ProgressBar(260, 565, 200, "green");
+        progressBar.makeVisible();
+
     }
 
     
-    /*
-     * Actualiza la barra de progreso en función de las monedas robadas y pasos gastados.
+    /**
+     * Actualiza la barra de progreso según las ganancias netas de los robots.
+     * Usa progressBar.update(percentage) de la clase ProgressBar (porcentaje entre 0.0 y 1.0).
      */
     private void updateProgressBar() {
-        int total = 0;
+        if (progressBar == null) return;
     
+        int total = 0;
         for (int i = 0; i < robots.size(); i++) {
             int stolenTenges = robots.get(i).getStolenTenges();
-            int stepsEds = robots.get(i).getSteps();
+            int stepsEds     = robots.get(i).getSteps();
             total += (stolenTenges - stepsEds);
         }
     
-        if (total < 0) {
-            total = 0;
-        }
+        if (total < 0) total = 0;
+    
         int maximo = totalInitialTenges;
-        
-        if (maximo <= 0) {
-            maximo = 1; // evitar división por cero
-        }
-        int altura = (int) ((total * 200.0) / maximo);
-        
-        if (altura > 200) {
-            altura = 200;
-        }
-        bar.changeSize(20, altura);  
+        if (maximo <= 0) maximo = 1; // evitar división por cero
+    
+        double porcentaje = (double) total / (double) maximo;
+        if (porcentaje < 0.0) porcentaje = 0.0;
+        if (porcentaje > 1.0) porcentaje = 1.0;
+    
+        progressBar.update(porcentaje);
     }
+
     
     /* Suma las monedas robadas (no descuenta pasos) de todos los robots
      * *@return sume de los stolenTenges de todos los robots
@@ -125,7 +116,8 @@ public class SilkRoad
      * @param newLocation nueva posición a la que se moverá
      */
     public void moveRobot(int location, int meters) {
-        if (isVisible == true && (meters < 1 || meters > road.getRectangles().size())) {
+        int position = (location - 1) + meters;
+        if (isVisible == true && (position < 0 || position > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Movement out of range.", "Error", JOptionPane.WARNING_MESSAGE);
             itsOk = false;
             return;
@@ -145,19 +137,20 @@ public class SilkRoad
             return;
         }
         for (Robot r : robots) {
-            if (isVisible == true && r != robot && r.getPosition() == meters - 1) {
+            if (isVisible == true && r != robot && r.getPosition() == position) {
                 JOptionPane.showMessageDialog(null, "There is already a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
                 itsOk = false;
                 return;
             }
         }
-        robot.setPosition(meters - 1, road);
-        int steps = Math.abs(meters - location);
+        robot.setPosition(position, road);
+        int steps = Math.abs(meters);
         
         for (Store s : stores) {
-            if (s.getLocation() == meters - 1 && s.getTenges() > 0) {
+            if (s.getLocation() == position && s.getTenges() > 0) {
                 int robbed = s.stealAll();
                 robot.addTenges(robbed);
+                s.setColor("white");
                 break;
             }
         }
@@ -271,6 +264,7 @@ public class SilkRoad
         for (int i = 0; i < stores.size(); i++) {
             Store s = stores.get(i);
             s.resupply();
+            s.resetColor();
         }
     
         for (Robot r : robots) {
@@ -284,6 +278,8 @@ public class SilkRoad
      * Reinicia el estado del juego: robots y tiendas.
      */
     public void reboot(){
+        int currentProfit = porfit(); // tu método que calcula la ganancia neta
+        totallitary.add(currentProfit);
         returnRobots(); 
         resupplyStores();
         if (isVisible == true){
@@ -313,9 +309,9 @@ public class SilkRoad
         if (backGround != null) {
             backGround.makeVisible();
         }
-
-        if (bar != null) {
-            bar.makeVisible();
+        
+        if (progressBar != null) {
+            progressBar.makeVisible();
         }
     }
     
@@ -337,12 +333,12 @@ public class SilkRoad
             s.makeInvisible();
         }
     
-        if (bar != null) {
-            bar.makeInvisible();
-        }
-    
         if (backGround != null) {
             backGround.makeInvisible();
+        }
+        
+        if (progressBar != null) {
+            progressBar.makeInvisible();
         }
     }
     
@@ -497,13 +493,14 @@ public class SilkRoad
                     }
             }
         }
+
     }
     
     /**
      * Cada robot escoge su movimiento mas rentable a la hora de 
      * robar tiendas
      */
-    public void moveRobot(){
+    public void moveRobots(){
         boolean moved;
         do {
             moved = false;
@@ -515,7 +512,8 @@ public class SilkRoad
                 int bestProfitRobot = -10000;
                 for (Store s : stores) {
                     if (s.getTenges() <= 0) continue;
-                    int profit = s.getTenges() - Math.abs(s.getLocation() - r.getPosition());
+                    int steps = Math.abs(s.getLocation() - r.getPosition());
+                    int profit = s.getTenges() - steps;
                     if (profit >= 0 && profit > bestProfitRobot) {
                         bestProfitRobot = profit;
                         bestRobot = s;
@@ -529,7 +527,10 @@ public class SilkRoad
             }
     
             if (rob != null && sto != null) {
-                moveRobot(rob.getPosition() + 1, sto.getLocation() + 1);
+                int teps = sto.getLocation() - rob.getPosition();
+                moveRobot(rob.getPosition() + 1, teps);
+                //int realEarnings = rob.getStolenTenges();
+                //rob.recordEarnings(realEarnings);
                 rob.recordEarnings(bestProfit);
                 moved = true;
             }
@@ -539,7 +540,7 @@ public class SilkRoad
     /**
      * dice cuantas veces se han vaciados las tienda
      * @return el conjunto de tienda con la cuenta de cuantas veces
-     * se vaciaron cada una
+     * se vaciaron cada una 
      */
     public int[][] empitiedStores() {
         int[][] data = new int[stores.size()][2];

@@ -14,6 +14,7 @@ public class Store {
     private String color;
     private int emptiedCount; //Metodo ciclo 2
     private String sColor = "yellow";
+    private String theColor;
     //private static final String[] sColor = {"red", "yellow", "blue", "green", "magenta"};
     //private static final Random rand = new Random();
 
@@ -23,6 +24,7 @@ public class Store {
         this.initialTenges = tenges;
         //this.color = sColor[rand.nextInt(sColor.length)];
         this.color = sColor;
+        this.theColor = sColor;
         this.maxTenges = 0;
         this.emptiedCount = 0; 
 
@@ -45,7 +47,11 @@ public class Store {
         }
         return stolen;
     }
-
+    
+    public void resetColor(){
+        setColor(theColor);
+    }
+    
     /**
      * @return veces que la tienda ha sido vaciada 
      */
