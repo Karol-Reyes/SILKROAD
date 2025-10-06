@@ -25,11 +25,11 @@ public class Canvas{
      * Factory method to get the canvas singleton object.
      */
     public static Canvas getCanvas(){
-        if(canvasSingleton == null) {
-            canvasSingleton = new Canvas("BlueJ Shapes Demo", 1000, 1000, 
-                                         Color.white);
+        if (canvasSingleton == null) {
+            canvasSingleton = new Canvas("BlueJ Shapes Demo", 1000, 1000, Color.white);
+            canvasSingleton.setVisible(false);
+            canvasSingleton.frame.setVisible(false);
         }
-        canvasSingleton.setVisible(true);
         return canvasSingleton;
     }
 

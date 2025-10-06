@@ -157,4 +157,42 @@ public class Robot {
     public List<Integer> getEarningsHistory() {
         return earningsHistory;
     }
+    
+    //////////////////////////////////C I C L O  3 ///////////////////////////
+    /**Mueve el robot a la derecha*/
+    public void moveRight(Road road){
+        moveBy(1, 0, road);
+    }
+    
+    /**Mueve el robot a la izquierda*/
+    public void moveLeft(Road road) {
+        moveBy(-1, 0, road);
+    }
+
+    /**Mueve el robot a la arriba*/
+    public void moveUp(Road road) {
+        moveBy(0, -1, road);
+    }
+
+    /**Mueve el robot a la abajo*/
+    public void moveDown(Road road) {
+        moveBy(0, 1, road);
+    }
+    
+    /**Calcula la nueva casilla a la que se dirigirá el robot
+     * @param bloque en x
+     * @param bloque en y
+     * @param road al que pertenece el robot
+     */
+    private void moveBy(int xBlocks, int yBlocks, Road road) {
+
+        int theWidth = road.getWidth() + 5;
+        int theHeigth = road.getHeight() + 5;
+
+        int newX = getX() + xBlocks * theWidth;
+        int newY = getY() + yBlocks * theHeigth;
+
+        shape.moveHorizontal(xBlocks * theWidth);
+        shape.moveVertical(yBlocks * theHeigth);
+    }
 }

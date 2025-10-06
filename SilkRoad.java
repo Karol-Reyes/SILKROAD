@@ -23,9 +23,17 @@ public class SilkRoad
     private int totalInitialTenges = 0;
     private boolean isVisible;
     private boolean itsOk;
-    private List<Integer> totallitary = new ArrayList<>();
     private ProgressBar progressBar;
+    private int delayed = 0;
     
+    /**
+     * Entrega las ganancias totales por dia
+     * @return ganancias por dia
+     */
+    public int getTotallitary(){
+        int currentProfit = porfit();
+        return currentProfit;
+    }
     ////////////////////////////////////////////////////// C I C L O   U N O ////////////////////////////////////////
     /**
      * Crea una instancia del juego con un camino de cierta cantidad de casillas.
@@ -37,7 +45,6 @@ public class SilkRoad
         this.robots = new ArrayList<>();
         this.stores = new ArrayList<>(); 
         this.itsOk = true;
-        makeVisible(); 
         
         progressBar = new ProgressBar(260, 565, 200, "green");
         progressBar.makeVisible();
@@ -110,6 +117,17 @@ public class SilkRoad
         itsOk = true;
     }
     
+    /*
+     * tiempo de demora de la ejecucion
+     */
+    private void delay(int delayed) {
+        try { 
+            Thread.sleep(delayed); 
+        } catch (InterruptedException e) { 
+            Thread.currentThread().interrupt(); 
+        }
+    }
+    
     /**
      * Mueve un robot de una casilla a otra. Si entra en una tienda, roba sus monedas.
      * @param location posición actual del robot
@@ -143,8 +161,37 @@ public class SilkRoad
                 return;
             }
         }
-        robot.setPosition(position, road);
         int steps = Math.abs(meters);
+        
+        int direction = (meters >= 0) ? 1 : -1;
+        int nowPos = location - 1;
+        
+        for (int i = 0; i < steps; i++) {
+            int nextPos = nowPos + direction;
+            if (isVisible == true && nextPos < 0 || nextPos >= road.getRectangles().size()) {
+                JOptionPane.showMessageDialog(null, "Movement out of range.", "Error", JOptionPane.WARNING_MESSAGE);
+                itsOk = false;
+                return;
+            }
+        
+            Rectangle now = road.getRectangles().get(nowPos);
+            Rectangle next = road.getRectangles().get(nextPos);
+        
+            if (next.getX() > now.getX()) {
+                robot.moveRight(road);
+            } else if (next.getX() < now.getX()) {
+                robot.moveLeft(road);
+            } else if (next.getY() > now.getY()) {
+                robot.moveDown(road);
+            } else if (next.getY() < now.getY()) {
+                robot.moveUp(road);
+            }
+            
+            delay(delayed);
+            nowPos = nextPos;
+        }
+        
+        robot.setPosition(position, road);
         
         for (Store s : stores) {
             if (s.getLocation() == position && s.getTenges() > 0) {
@@ -278,8 +325,6 @@ public class SilkRoad
      * Reinicia el estado del juego: robots y tiendas.
      */
     public void reboot(){
-        int currentProfit = porfit(); // tu método que calcula la ganancia neta
-        totallitary.add(currentProfit);
         returnRobots(); 
         resupplyStores();
         if (isVisible == true){
@@ -293,7 +338,7 @@ public class SilkRoad
      */
     public void makeVisible() {
         isVisible = true;
-    
+        Canvas.getCanvas().setVisible(true);    
         for (Rectangle r : road.getRectangles()) {
             r.makeVisible();
         }
@@ -572,5 +617,13 @@ public class SilkRoad
             }
         }
         return result;
+    }
+    
+    /**
+     * Configura el tiempo de delay (en milisegundos) para los movimientos.
+     * @param ms tiempo de delay en milisegundos
+     */
+    public void setDelay(int ms) {
+        this.delayed = ms;
     }
 }
