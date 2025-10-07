@@ -22,7 +22,6 @@ public class SilkRoadContest{
             profits[i] = road.getTotallitary();
             
             road.reboot();
-            road.makeInvisible();
         }
         
         for (int j = 0; j < days.length; j++){                

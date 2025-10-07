@@ -409,7 +409,7 @@ public class SilkRoad
             information [index][1] = s.getTenges();
             index++;
         }
-        java.util.Arrays.sort(information, (a,b) -> Integer.compare(a[0], b[0]));
+        Arrays.sort(information, (a,b) -> Integer.compare(a[0], b[0]));
         return information;
     }
 
@@ -426,7 +426,7 @@ public class SilkRoad
             information[index][1] = r.getStolenTenges() - r.getSteps();
             index++;
         }
-        java.util.Arrays.sort(information, (a, b) -> Integer.compare(a[0], b[0]));
+        Arrays.sort(information, (a, b) -> Integer.compare(a[0], b[0]));
         return information;
     }
    
@@ -601,7 +601,7 @@ public class SilkRoad
     
         for (int i = 0; i < robots.size(); i++) {
             Robot r = robots.get(i);
-            java.util.List<Integer> history = r.getEarningsHistory();
+            List<Integer> history = r.getEarningsHistory();
     
             result[i] = new int[history.size() + 1];
             result[i][0] = r.getOriginalPosition() + 1;

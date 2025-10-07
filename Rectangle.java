@@ -11,7 +11,7 @@ import java.awt.*;
  
 public class Rectangle{
 
-    public static int EDGES = 4;
+    public static int edges = 4;
     
     private int height;
     private int width;
