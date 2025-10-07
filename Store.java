@@ -48,6 +48,9 @@ public class Store {
         return stolen;
     }
     
+    /**
+     * Devuelve el color asignado originalmente
+     */
     public void resetColor(){
         setColor(theColor);
     }

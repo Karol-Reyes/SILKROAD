@@ -26,22 +26,40 @@ public class Circle{
         isVisible = false;
     }
     
-    
+    /**
+     * @return posicion en X del circulo
+     */
     public int getX(){ return xPosition; }
+    
+    /**
+     * @return posicion en y del circulo
+     */
     public int getY(){ return yPosition; }
+    
+    /**
+     * @return color del circulo
+     */
     public String getColor(){return color;}
     
+    /**
+     * hacer visible el circulo
+     */
     public void makeVisible(){
         isVisible = true;
         draw();
     }
     
-
+    /**
+     * hacer invisible el circulo
+     */
     public void makeInvisible(){
         erase();
         isVisible = false;
     }
 
+    /**
+     * dibujar el circulo
+     */
     private void draw(){
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();
@@ -52,6 +70,9 @@ public class Circle{
         }
     }
 
+    /**
+     * borrar el circulo
+     */
     private void erase(){
         if(isVisible) {
             Canvas canvas = Canvas.getCanvas();
@@ -166,7 +187,4 @@ public class Circle{
         color = newColor;
     draw();
     }
-
-    
-
 }

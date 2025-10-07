@@ -17,13 +17,25 @@ public class SilkRoadContest{
         
         for (int i = 0; i < days.length; i++){
             int[][] partial = Arrays.copyOfRange(days, 0, i + 1);
-            this.road = new SilkRoad(partial);            
+            this.road = new SilkRoad(partial);
             road.moveRobots();
             profits[i] = road.getTotallitary();
             
             road.reboot();
             road.makeInvisible();
         }
+        
+        for (int j = 0; j < days.length; j++){                
+                int[] pos = days[j];                
+                int type = pos[0];                
+                int location = pos[1];                                
+                if (type == 1){                    
+                    road.removeRobot(location);                
+                }                
+                else if (type == 2){                    
+                    road.removeStore(location);                   
+                }            
+            }
         return profits;
     }
     
@@ -36,8 +48,9 @@ public class SilkRoadContest{
         for (int i = 0; i < days.length; i++){
             int[][] partial = Arrays.copyOfRange(days, 0, i + 1);
             Canvas.getCanvas().setVisible(true);
-            this.road = new SilkRoad(partial);
             
+            this.road = new SilkRoad(partial);
+            this.road.makeVisible();
             delayValue = slow ? 100 : 0;
             this.road.setDelay(delayValue);
             

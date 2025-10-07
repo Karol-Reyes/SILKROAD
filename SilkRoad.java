@@ -26,6 +26,27 @@ public class SilkRoad
     private ProgressBar progressBar;
     private int delayed = 0;
     
+    ////////////////////////////////////////////////////// C I C L O   U N O ////////////////////////////////////////
+    
+    /**
+     * Crea una instancia del juego con un camino de cierta cantidad de casillas.
+     * @param quantity número de casillas del camino
+     */
+    public SilkRoad(int quantity) {
+        road = new Road(quantity);
+        this.isVisible = false;
+        this.robots = new ArrayList<>();
+        this.stores = new ArrayList<>(); 
+        this.itsOk = false;
+        
+        progressBar = new ProgressBar(260, 565, 200, "green");
+        
+        Canvas canvas = Canvas.getCanvas();
+        if (canvas.isVisible()) {
+            progressBar.makeVisible();
+        }
+    }
+
     /**
      * Entrega las ganancias totales por dia
      * @return ganancias por dia
@@ -34,23 +55,6 @@ public class SilkRoad
         int currentProfit = porfit();
         return currentProfit;
     }
-    ////////////////////////////////////////////////////// C I C L O   U N O ////////////////////////////////////////
-    /**
-     * Crea una instancia del juego con un camino de cierta cantidad de casillas.
-     * @param quantity número de casillas del camino
-     */
-    public SilkRoad(int quantity) {
-        road = new Road(quantity);
-        boolean isVisible = false;
-        this.robots = new ArrayList<>();
-        this.stores = new ArrayList<>(); 
-        this.itsOk = true;
-        
-        progressBar = new ProgressBar(260, 565, 200, "green");
-        progressBar.makeVisible();
-
-    }
-
     
     /**
      * Actualiza la barra de progreso según las ganancias netas de los robots.
@@ -76,9 +80,9 @@ public class SilkRoad
         if (porcentaje > 1.0) porcentaje = 1.0;
     
         progressBar.update(porcentaje);
+        itsOk = true;
     }
 
-    
     /* Suma las monedas robadas (no descuenta pasos) de todos los robots
      * *@return sume de los stolenTenges de todos los robots
      */
@@ -327,10 +331,7 @@ public class SilkRoad
     public void reboot(){
         returnRobots(); 
         resupplyStores();
-        if (isVisible == true){
-            JOptionPane.showMessageDialog(null, "All items have been reset", 
-            "reboot completed", JOptionPane.INFORMATION_MESSAGE);
-        }
+        itsOk = true;
     }
     
     /**
@@ -351,13 +352,7 @@ public class SilkRoad
             r.makeVisible();
         }
         
-        if (backGround != null) {
-            backGround.makeVisible();
-        }
-        
-        if (progressBar != null) {
-            progressBar.makeVisible();
-        }
+        progressBar.makeVisible();
     }
     
     /**
@@ -377,14 +372,8 @@ public class SilkRoad
         for (Store s : stores) {
             s.makeInvisible();
         }
-    
-        if (backGround != null) {
-            backGround.makeInvisible();
-        }
         
-        if (progressBar != null) {
-            progressBar.makeInvisible();
-        }
+        progressBar.makeInvisible();
     }
     
     /*Calcula las monedas con las que quedan los robots despues de
@@ -437,7 +426,6 @@ public class SilkRoad
             information[index][1] = r.getStolenTenges() - r.getSteps();
             index++;
         }
-    
         java.util.Arrays.sort(information, (a, b) -> Integer.compare(a[0], b[0]));
         return information;
     }
@@ -480,6 +468,9 @@ public class SilkRoad
         System.exit(0);  // termina el programa
     }
     
+    /**
+     * @return si una operacion se realizó correctamente o no
+     */
     public boolean ok(){
         return itsOk;
     }
@@ -508,8 +499,8 @@ public class SilkRoad
         for (int[] row : days) {
             if (isVisible == true && row.length < 2) {
                 JOptionPane.showMessageDialog(
-                    null, "invalid row, please assign at least one object and one location",
-                    "Configuration Error", JOptionPane.ERROR_MESSAGE);
+                null, "invalid row, please assign at least one object and one location","Configuration Error", JOptionPane.ERROR_MESSAGE);
+                itsOk = false;
                 continue;
             }
             int type = row[0];
@@ -524,6 +515,7 @@ public class SilkRoad
                         JOptionPane.showMessageDialog(
                         null, "the 'tenges' data is missing", 
                         "Configuration Error", JOptionPane.ERROR_MESSAGE);
+                        itsOk = false;
                     } else {
                         int tenges = row[2];
                         placeStore(position, tenges);
@@ -535,10 +527,11 @@ public class SilkRoad
                         JOptionPane.showMessageDialog(
                         null, "invalid type: " + type + " (only 1=Robot or 2=Store)",
                         "Configuration Error", JOptionPane.ERROR_MESSAGE);
+                        itsOk = false;
                     }
             }
         }
-
+        itsOk = true;
     }
     
     /**
@@ -580,6 +573,7 @@ public class SilkRoad
                 moved = true;
             }
         } while (moved);
+        itsOk = true;
     }
     
     /**
@@ -618,6 +612,8 @@ public class SilkRoad
         }
         return result;
     }
+    
+    ////////////////////////////////////////////  C I C L O   3  /////////////////////////////////////
     
     /**
      * Configura el tiempo de delay (en milisegundos) para los movimientos.

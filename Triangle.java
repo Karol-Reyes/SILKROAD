@@ -30,8 +30,19 @@ public class Triangle{
         isVisible = false;
     }
     
+    /**
+     * @return posicion en X del triangulo
+     */
     public int getX() {return xPosition;}
+    
+    /**
+     * @return posicion en y del triangulo
+     */
     public int getY() {return yPosition;}
+    
+    /**
+     * @return color del triangulo
+     */
     public String getColor(){return color;}
 
     /**

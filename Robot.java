@@ -150,10 +150,17 @@ public class Robot {
     
     //////////////////////////////////CICLO 2///////////////////////////
     
+    /**
+     * agrega el historial de ganacias a una lista
+     * @param suma de las ganancias obtenidas 
+     */
     public void recordEarnings(int amount) {
         earningsHistory.add(amount);
     }
-
+    
+    /**
+     * @return lista del historico de ganancias
+     */
     public List<Integer> getEarningsHistory() {
         return earningsHistory;
     }

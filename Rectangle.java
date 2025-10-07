@@ -32,10 +32,16 @@ public class Rectangle{
         isVisible = false;
     }
     
+    /**
+     * @return posicion en X del rectangulo
+     */
     public int getX() {
     return xPosition;
     }
-
+    
+    /**
+     * @return posicion en Y del rectangulo
+     */
     public int getY() {
         return yPosition;
     }

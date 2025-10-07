@@ -1,3 +1,4 @@
+
 /**
  * Clase que representa la barra de progreso o de ganancias con los tenges.
  */
@@ -38,12 +39,22 @@ public class ProgressBar {
         bar.moveHorizontal(x);
         bar.moveVertical(y);
     }
-
+    
+    /**
+     * Hace visible la barra de progreso 
+     */
     public void makeVisible() {
-        background.makeVisible();
-        bar.makeVisible();
+        if (background != null) {
+            background.makeVisible();
+        }
+        if (bar != null) {
+            bar.makeVisible();
+        }
     }
     
+    /**
+     * Hace invisible la barra de progreso 
+     */
     public void makeInvisible() {
         if (bar != null) {
             bar.makeInvisible();
@@ -52,7 +63,7 @@ public class ProgressBar {
             background.makeInvisible();
         }
     }
-
+    
     /**
      * Actualiza la barra según el porcentaje (0.0 a 1.0)
      */
@@ -64,13 +75,16 @@ public class ProgressBar {
         bar.changeSize(20, newWidth);
         currentWidth = newWidth;
     }
-
+    
+    /**
+     * genera el nuevo color de la barra
+     */
     public void changeColor(String newColor) {
         bar.changeColor(newColor);
         this.color = newColor;
     }
     
-        /**
+    /**
      * Vuelve la barra a 0% 
      */
     public void reset() {

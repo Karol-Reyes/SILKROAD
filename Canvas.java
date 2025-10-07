@@ -20,6 +20,7 @@ public class Canvas{
     // shape objects in this project clean and simple for educational purposes.
 
     private static Canvas canvasSingleton;
+    private boolean isVisible;
 
     /**
      * Factory method to get the canvas singleton object.
@@ -81,6 +82,10 @@ public class Canvas{
             graphic.setColor(Color.black);
         }
         frame.setVisible(visible);
+    }
+    
+    public boolean isVisible() {
+        return isVisible;
     }
 
     /**
