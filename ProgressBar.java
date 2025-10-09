@@ -1,7 +1,3 @@
-
-/**
- * Clase que representa la barra de progreso o de ganancias con los tenges.
- */
 public class ProgressBar {
     private Rectangle background;
     private Rectangle bar;
@@ -11,6 +7,9 @@ public class ProgressBar {
     private int y;
     private String color;
 
+    /**
+     * Crea la barra de progreso para SikRoad
+     */
     public ProgressBar(int x, int y, int maxWidth, String color) {
         this.x = x;
         this.y = y;
@@ -18,17 +17,15 @@ public class ProgressBar {
         this.color = color;
         this.currentWidth = 0;
 
-        // Fondo negro (marco)
         background = new Rectangle();
         background.changeColor("black");
         background.changeSize(20, maxWidth);
         background.moveHorizontal(x);
         background.moveVertical(y);
 
-        // Barra de progreso (relleno)
         bar = new Rectangle();
         bar.changeColor(color);
-        bar.changeSize(20, 0); // ancho inicial 0
+        bar.changeSize(20, 0);
         bar.moveHorizontal(x);
         bar.moveVertical(y);
     }
@@ -58,7 +55,7 @@ public class ProgressBar {
     }
     
     /**
-     * Actualiza la barra según el porcentaje (0.0 a 1.0)
+     * Actualiza la barra según el porcentaje
      */
     public void update(double percentage) {
         if (percentage < 0) percentage = 0;
