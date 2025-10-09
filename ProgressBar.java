@@ -11,13 +11,6 @@ public class ProgressBar {
     private int y;
     private String color;
 
-    /**
-     * Crea una barra de progreso fija en pantalla.
-     * @param x posición horizontal
-     * @param y posición vertical
-     * @param maxWidth ancho máximo de la barra (en píxeles)
-     * @param color color del progreso (por ejemplo, "green")
-     */
     public ProgressBar(int x, int y, int maxWidth, String color) {
         this.x = x;
         this.y = y;
