@@ -19,7 +19,7 @@ public class SilkRoadContest{
             int[][] partial = Arrays.copyOfRange(days, 0, i + 1);
             this.road = new SilkRoad(partial);
             road.moveRobots();
-            profits[i] = road.getTotallitary();
+            profits[i] = road.porfit();
             
             road.reboot();
         }
