@@ -1,3 +1,6 @@
+package silkroad;
+import shapes.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,15 +51,6 @@ public class SilkRoad
     }
 
     /**
-     * Entrega las ganancias totales por dia
-     * @return ganancias por dia
-     */
-    public int getTotallitary(){
-        int currentProfit = porfit();
-        return currentProfit;
-    }
-    
-    /**
      * Actualiza la barra de progreso según las ganancias netas de los robots.
      * Usa progressBar.update(percentage) de la clase ProgressBar (porcentaje entre 0.0 y 1.0).
      */
@@ -99,7 +93,7 @@ public class SilkRoad
      * @param location posición en el camino
      */
     public void placeRobot(int location) {
-        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
+        if ((isVisible == true) && (location < 1 || location >= road.getRectangles().size())) {
             JOptionPane.showMessageDialog(
                 null, "Position out of range.", "Error", JOptionPane.WARNING_MESSAGE
             );
@@ -107,14 +101,14 @@ public class SilkRoad
             return;
         }
         for (Robot r : robots) {
-            if (isVisible == true && r.getPosition() == location - 1) {
+            if ((isVisible == true) && (r.getPosition() == location - 1)) {
                 JOptionPane.showMessageDialog(
                     null, "There is already a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
                 itsOk = false;
                 return;
             }
         }
-        Robot robot = new Robot(location - 1, road);
+        Robot robot = new RobotNormal(location - 1, road);
         robots.add(robot);
         
         updateProgressBar();
@@ -139,7 +133,7 @@ public class SilkRoad
      */
     public void moveRobot(int location, int meters) {
         int position = (location - 1) + meters;
-        if (isVisible == true && (position < 0 || position > road.getRectangles().size())) {
+        if ((isVisible == true) && (position < 0 || position >= road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Movement out of range.", "Error", JOptionPane.WARNING_MESSAGE);
             itsOk = false;
             return;
@@ -153,18 +147,24 @@ public class SilkRoad
                 break;
             }
         }
-        if (isVisible == true && robot == null) {
+        if ((isVisible == true) && (robot == null)) {
             JOptionPane.showMessageDialog(null, "There is no a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
             itsOk = false;
             return;
         }
         for (Robot r : robots) {
-            if (isVisible == true && r != robot && r.getPosition() == position) {
+            if ((isVisible == true) && (r != robot) && (r.getPosition() == position)) {
                 JOptionPane.showMessageDialog(null, "There is already a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
                 itsOk = false;
                 return;
             }
         }
+        
+        if (!robot.canMove(position)) {
+            itsOk = false;
+            return;
+        }
+        
         int steps = Math.abs(meters);
         
         int direction = (meters >= 0) ? 1 : -1;
@@ -172,7 +172,7 @@ public class SilkRoad
         
         for (int i = 0; i < steps; i++) {
             int nextPos = nowPos + direction;
-            if (isVisible == true && nextPos < 0 || nextPos >= road.getRectangles().size()) {
+            if ((isVisible == true) && (nextPos < 0 || nextPos >= road.getRectangles().size())) {
                 JOptionPane.showMessageDialog(null, "Movement out of range.", "Error", JOptionPane.WARNING_MESSAGE);
                 itsOk = false;
                 return;
@@ -198,10 +198,8 @@ public class SilkRoad
         robot.setPosition(position, road);
         
         for (Store s : stores) {
-            if (s.getLocation() == position && s.getTenges() > 0) {
-                int robbed = s.stealAll();
-                robot.addTenges(robbed);
-                s.setColor("white");
+            if ((s.getLocation() == position) && (s.getTenges() > 0)) {
+                robot.interactWithStore(s);
                 break;
             }
         }
@@ -214,7 +212,7 @@ public class SilkRoad
      * @param location posición del robot a eliminar
      */
     public void removeRobot(int location) {
-        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
+        if ((isVisible == true) && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Box out of range", "Error",JOptionPane.WARNING_MESSAGE);
             itsOk = false;
             return;
@@ -229,7 +227,7 @@ public class SilkRoad
                 break;
             }
         }
-        if (isVisible == true && !removed){
+        if ((isVisible == true) && !removed){
             JOptionPane.showMessageDialog(null, "There is no a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);   
             itsOk = false;
         }
@@ -252,25 +250,23 @@ public class SilkRoad
     }
 
     /**
-     * Coloca una tienda en la posición indicada.
-     * @param location posición de la tienda
      * @param tenges número de monedas iniciales
      */
     public void placeStore(int location, int tenges) {
-        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
+        if ((isVisible == true) && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Box out of range", "Error", JOptionPane.WARNING_MESSAGE);
             itsOk = false;
             return;
         }
     
         for (Store s : stores) {
-            if (isVisible == true && s.getLocation() == location - 1) {
+            if ((isVisible == true) && (s.getLocation() == location - 1)) {
                 JOptionPane.showMessageDialog(null, "There is already a store in the box", "Error", JOptionPane.WARNING_MESSAGE);
                 itsOk = false;
                 return;
             }
         }
-        Store store = new Store(location - 1, tenges, road);
+        Store store = new NormalStore(location - 1, tenges, road);
         stores.add(store);
         
         totalInitialTenges += tenges;
@@ -278,13 +274,13 @@ public class SilkRoad
         updateProgressBar();
         itsOk = true;
     }
-    
+        
     /**
      * Elimina una tienda de la casilla indicada.
      * @param location posición de la tienda a eliminar
      */
     public void removeStore(int location) {
-        if (isVisible == true && (location < 1 || location > road.getRectangles().size())) {
+        if ((isVisible == true) && (location < 1 || location > road.getRectangles().size())) {
             JOptionPane.showMessageDialog(null, "Box out of range", "Error", JOptionPane.WARNING_MESSAGE);
             itsOk = false;
             return;
@@ -300,7 +296,7 @@ public class SilkRoad
                 break;
             }
         }
-        if (isVisible == true && !removed){
+        if ((isVisible == true) && !removed){
             JOptionPane.showMessageDialog(null, "There is no a store in the box", "Error", JOptionPane.WARNING_MESSAGE);    
             itsOk = false;
         }
@@ -331,6 +327,11 @@ public class SilkRoad
     public void reboot(){
         returnRobots(); 
         resupplyStores();
+        
+        for (Robot r : robots) {
+            r.getEarningsHistory().clear();
+        }
+    
         itsOk = true;
     }
     
@@ -497,7 +498,7 @@ public class SilkRoad
     public SilkRoad(int[][] days) {
         this(maxPos(days));
         for (int[] row : days) {
-            if (isVisible == true && row.length < 2) {
+            if ((isVisible == true) && (row.length < 2)) {
                 JOptionPane.showMessageDialog(
                 null, "invalid row, please assign at least one object and one location","Configuration Error", JOptionPane.ERROR_MESSAGE);
                 itsOk = false;
@@ -508,7 +509,6 @@ public class SilkRoad
             switch (type) {
                 case 1:
                     placeRobot(position);
-                    robots.get(robots.size() - 1).setColor("red");
                     break;
                 case 2:
                     if (isVisible == true && row.length < 3) {
@@ -519,7 +519,6 @@ public class SilkRoad
                     } else {
                         int tenges = row[2];
                         placeStore(position, tenges);
-                        stores.get(stores.size() - 1).setColor("magenta");
                     }
                     break;
                 default:
@@ -621,5 +620,95 @@ public class SilkRoad
      */
     public void setDelay(int ms) {
         this.delayed = ms;
+    }
+    
+    ////////////////////////////////////////////  C I C L O   4  /////////////////////////////////////
+    
+    /**
+     * Coloca un robot de un tipo específico en la posición indicada.
+     * @param type tipo de robot ("normal", "neverback" o "tender")
+     * @param location posición donde se colocará
+     */
+    public void placeRobot(String type, int location) {
+        if ((isVisible == true) && (location < 1 || location > road.getRectangles().size())) {
+            JOptionPane.showMessageDialog(null, "Position out of range.", "Error", JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
+            return;
+        }
+    
+        for (Robot r : robots) {
+            if ((isVisible == true) && (r.getPosition() == location - 1)) {
+                JOptionPane.showMessageDialog(null, "There is already a robot in the box", "Error", JOptionPane.WARNING_MESSAGE);
+                itsOk = false;
+                return;
+            }
+        }
+    
+        Robot robot;
+        switch (type.toLowerCase()) {
+            case "neverback":
+                robot = new RobotNeverBack(location - 1, road);
+                break;
+            case "tender":
+                robot = new RobotTender(location - 1, road);
+                break;
+            case "normal":
+                robot = new RobotNormal(location - 1, road);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Invalid robot type: " + type, "Error", JOptionPane.ERROR_MESSAGE);
+                itsOk = false;
+                return;
+        }
+    
+        robots.add(robot);
+        updateProgressBar();
+        itsOk = true;
+    }
+    
+    
+    /**
+     * Coloca una tienda de un tipo específico en la posición indicada.
+     * @param type tipo de tienda ("normal", "autonomous" o "fighter")
+     * @param tenges número de monedas iniciales
+     */
+    public void placeStore(String type, int location, int tenges) {
+        if ((isVisible == true) && (location < 1 || location > road.getRectangles().size())) {
+            JOptionPane.showMessageDialog(null, "Box out of range", "Error", JOptionPane.WARNING_MESSAGE);
+            itsOk = false;
+            return;
+        }
+    
+        for (Store s : stores) {
+            if ((isVisible == true) && (s.getLocation() == location - 1)) {
+                JOptionPane.showMessageDialog(null, "There is already a store in the box", "Error", JOptionPane.WARNING_MESSAGE);
+                itsOk = false;
+                return;
+            }
+        }
+    
+        Store store;
+        switch (type.toLowerCase()) {
+            case "normal":
+                store = new NormalStore(location - 1, tenges, road);
+                break;
+            case "autonomous":
+                store = new AutonomousStore(location - 1, tenges, road);
+                break;
+            case "fighter":
+                store = new FighterStore(location - 1, tenges, road);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Invalid store type: " + type, "Error", JOptionPane.ERROR_MESSAGE);
+                itsOk = false;
+                return;
+        }
+    
+        stores.add(store);
+        totalInitialTenges += tenges;
+        store.setInitialTenges(tenges);
+    
+        updateProgressBar();
+        itsOk = true;
     }
 }

@@ -1,3 +1,6 @@
+package silkroad;
+import shapes.*;
+
 public class ProgressBar {
     private Rectangle background;
     private Rectangle bar;
@@ -5,7 +8,6 @@ public class ProgressBar {
     private int currentWidth;
     private int x;
     private int y;
-    private String color;
 
     /**
      * Crea la barra de progreso para SikRoad
@@ -14,20 +16,13 @@ public class ProgressBar {
         this.x = x;
         this.y = y;
         this.maxWidth = maxWidth;
-        this.color = color;
         this.currentWidth = 0;
 
-        background = new Rectangle();
-        background.changeColor("black");
+        background = new Rectangle("black",x,y);
         background.changeSize(20, maxWidth);
-        background.moveHorizontal(x);
-        background.moveVertical(y);
 
-        bar = new Rectangle();
-        bar.changeColor(color);
+        bar = new Rectangle(color,x,y);
         bar.changeSize(20, 0);
-        bar.moveHorizontal(x);
-        bar.moveVertical(y);
     }
     
     /**
@@ -64,14 +59,6 @@ public class ProgressBar {
         int newWidth = (int)(maxWidth * percentage);
         bar.changeSize(20, newWidth);
         currentWidth = newWidth;
-    }
-    
-    /**
-     * genera el nuevo color de la barra
-     */
-    public void changeColor(String newColor) {
-        bar.changeColor(newColor);
-        this.color = newColor;
     }
     
     /**

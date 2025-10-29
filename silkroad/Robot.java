@@ -1,3 +1,6 @@
+package silkroad;
+import shapes.*;
+
 import java.util.*;
 
 /**
@@ -5,19 +8,17 @@ import java.util.*;
  * Cada robot tiene una ubicación, pasos recorridos, monedas robadas
  * y una figura circular que lo representa visualmente en el tablero.
  */
-public class Robot {
-    private int location;
-    private int steps;
-    private int originalLocation;
-    private Circle shape;
-    private String color;
-    private String colors = "green";
-    //private static final String[] colors = {"red", "yellow", "blue", "green", "magenta"};
-    //private static final Random rand = new Random();
-    private int tenges;
-    private int stolenTenges;
+public abstract class Robot {
+    protected int location;
+    protected int steps;
+    protected int originalLocation;
+    protected Circle shape;
+    protected String color;
     
-    private List<Integer> earningsHistory;
+    protected int tenges;
+    protected int stolenTenges;
+    
+    protected List<Integer> earningsHistory;
 
     /**
      * Crea un nuevo robot en la ubicación indicada.
@@ -29,18 +30,21 @@ public class Robot {
         this.steps = 0;
         this.originalLocation = location;
         this.tenges = 0;
-        this.stolenTenges = 0;
-        this.color = colors;
-        //this.color = colors[rand.nextInt(colors.length)];
-
+        this.stolenTenges = 0;        
+        this.earningsHistory = new ArrayList<>();
+    }
+    
+    /**
+     * crea la figura que representa al robot y la ubica en la posicion designada
+     * @param carretera
+     */
+    protected void createShape(Road road){
         Rectangle rect = road.getRectangles().get(location);
         int posX = rect.getX() + 8;
         int posY = rect.getY() + 7;
 
         this.shape = new Circle(color, posX, posY);
         this.shape.makeVisible();
-        
-        this.earningsHistory = new ArrayList<>();
     }
 
     /** @return número total de pasos recorridos */
@@ -83,12 +87,9 @@ public class Robot {
      */
     public void spendTenges(int amount) {
         if (amount <= 0) return;
-        if (amount > tenges) {
-            tenges = 0;
-            stolenTenges = 0;
-        } else {
-            stolenTenges -= amount;
-        }
+        
+        this.tenges = Math.max(0, tenges - amount);
+        this.stolenTenges = Math.max(0, stolenTenges - amount);
     }
 
     /** Reinicia las monedas del robot. */
@@ -102,24 +103,7 @@ public class Robot {
      * @param pos nueva posición
      * @param road carretera del robot
      */
-    public void setPosition(int pos, Road road) {
-        if (pos < 0 || pos >= road.getRectangles().size()) return;
-        Rectangle rect = road.getRectangles().get(pos);
-
-        int posX = rect.getX() + 8;
-        int posY = rect.getY() + 7;
-
-        int pasos = Math.abs(pos - this.location);
-        steps += pasos;
-
-        int dx = posX - getX();
-        int dy = posY - getY();
-
-        shape.moveHorizontal(dx);
-        shape.moveVertical(dy);
-
-        this.location = pos;
-    }
+    public abstract void setPosition(int pos, Road road);
 
     /** Reinicia el contador de pasos. */
     public void resetSteps() { this.steps = 0; }
@@ -146,7 +130,6 @@ public class Robot {
 
     /** Hace invisible al robot. */
     public void makeInvisible() { shape.makeInvisible(); }
-    
     
     //////////////////////////////////CICLO 2///////////////////////////
     
@@ -196,10 +179,21 @@ public class Robot {
         int theWidth = road.getWidth() + 5;
         int theHeigth = road.getHeight() + 5;
 
-        int newX = getX() + xBlocks * theWidth;
-        int newY = getY() + yBlocks * theHeigth;
-
         shape.moveHorizontal(xBlocks * theWidth);
         shape.moveVertical(yBlocks * theHeigth);
+    }
+    
+    /**
+     * se define como un robot interactua con la tienda seleccionada
+     * @param tienda con la que interactua
+     */
+    public abstract void interactWithStore(Store store);
+    
+    /**
+     * @return si un robot puede realizar el movimiento o no
+     * @param posicion a donde se va a desplazar el robot
+     */
+    public boolean canMove(int newPosition){
+        return true;
     }
 }

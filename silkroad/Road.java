@@ -1,3 +1,6 @@
+package silkroad;
+import shapes.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class Road {
 
         while (generated < quantity) {
             for (int i = 0; i < length && generated < quantity; i++) {
-                Rectangle r = new Rectangle();
+                Rectangle r = new Rectangle("black", 0, 0);
                 r.changeSize(width, height);
                 r.makeVisible();
                 r.moveHorizontal(posX);
