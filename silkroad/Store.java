@@ -5,7 +5,7 @@ import shapes.*;
  * Clase base para las tiendas del juego SilkRoad.
  * Contiene el comportamiento común a todos los tipos de tiendas.
  */
-public class Store {
+public abstract class Store {
     protected int location;
     protected int tenges;
     protected int initialTenges;
