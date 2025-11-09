@@ -448,7 +448,7 @@ public class SilkRoad
     /*
      * @return lista de tiendas
      */
-    private List<Store> getStores() { 
+    public List<Store> getStores() { 
         return stores; 
     }
     
@@ -669,7 +669,7 @@ public class SilkRoad
     
     /**
      * Coloca una tienda de un tipo específico en la posición indicada.
-     * @param type tipo de tienda ("normal", "autonomous" o "fighter")
+     * @param type tipo de tienda ("normal", "autonomous", "fighter" o "nomad")
      * @param tenges número de monedas iniciales
      */
     public void placeStore(String type, int location, int tenges) {
@@ -697,6 +697,9 @@ public class SilkRoad
                 break;
             case "fighter":
                 store = new FighterStore(location - 1, tenges, road);
+                break;
+            case "nomad":
+                store = new NomadStore(location - 1, tenges, road);
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Invalid store type: " + type, "Error", JOptionPane.ERROR_MESSAGE);
